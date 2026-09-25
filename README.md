@@ -125,7 +125,12 @@ wrong on ordinary correct code, which is the one failure it cannot afford.
 
 ```bash
 PYTHONPATH=src python3 -m pytest tests -q      # 30 tests, no network
+./check.sh python3.9 python3.12                # everything CI runs, on every version it runs it on
 ```
+
+`check.sh` exists because the first two pushes of this repository went out green on one
+interpreter and red on the other: two fixtures contain a `match` statement, and `ast.parse` refuses
+it on 3.9. Running the suite on one version proved nothing about the version the package promises.
 
 Each test writes the package it is about into a temporary directory, so every assertion is about
 source the test itself created: both directions of every guard, one case per construct, and the
