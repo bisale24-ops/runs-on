@@ -136,6 +136,25 @@ Each test writes the package it is about into a temporary directory, so every as
 source the test itself created: both directions of every guard, one case per construct, and the
 rule that `a | b` outside an annotation is never reported.
 
+## Prior art
+
+[vermin](https://github.com/netromdk/vermin) has done the harder half of this for years: it detects
+the minimum Python version a body of code needs, takes one or two `--target` values, has a lint
+mode that prints only target violations, and exits non-zero when a target is not met. If you want
+the most complete feature database, use vermin — it has far more of Python's history encoded than
+this does.
+
+What this tool does differently is where the number comes from. Runs On takes nobody's target: it
+reads the floor the package *already promises* out of `pyproject.toml`, `setup.cfg`, `setup.py` and
+the trove classifiers, reports when those sources disagree with each other, and compares the code
+against the lowest of them, because that is the one pip enforces. The question is not "what does
+this code need" but "is the promise already on disk true" — which is the question that goes stale
+without anyone noticing, and the one a CI job can ask with no argument to keep up to date.
+
+The guarded category is the second difference: a newer construct behind `sys.version_info`, an
+import fallback or `TYPE_CHECKING` is printed as found-and-understood rather than suppressed
+silently, because a reader can only trust the silence if they can see what the tool looked at.
+
 ## Honest limits
 
 - **It reads what ships, not what runs.** Code reached through `exec`, a plugin, or a generated
