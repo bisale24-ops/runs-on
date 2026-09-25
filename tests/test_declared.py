@@ -33,4 +33,20 @@ def test_a_classifier_that_disagrees_is_a_contradiction(tmp_path):
     make_package(tmp_path, floor=">=3.8", classifiers=["3.10", "3.11"])
     found = declared.read(tmp_path)
     assert found.contradiction == [(3, 8), (3, 10)]
-    assert found.floor == (3, 8)        # pip honours the lowest, so that is what installs
+    # pip enforces requires-python and nothing else; classifiers only advertise
+    assert found.floor == (3, 8)
+    assert found.advertised == (3, 10)
+
+
+def test_classifiers_alone_become_the_floor_when_there_is_no_requires_python(tmp_path):
+    make_package(tmp_path, floor=None, classifiers=["3.11", "3.12"])
+    found = declared.read(tmp_path)
+    assert found.floor == (3, 11)
+
+
+def test_requires_python_wins_even_when_it_is_higher(tmp_path):
+    """python-docx ships exactly this: classifiers advertise 3.7, pip refuses below 3.9."""
+    make_package(tmp_path, floor=">=3.9", classifiers=["3.7", "3.8", "3.9"])
+    found = declared.read(tmp_path)
+    assert found.floor == (3, 9)
+    assert found.advertised == (3, 7)

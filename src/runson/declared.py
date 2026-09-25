@@ -29,6 +29,12 @@ class Declared:
         versions = {version for _, version, _ in self.sources}
         return sorted(versions) if len(versions) > 1 else None
 
+    @property
+    def advertised(self):
+        """The lowest version the trove classifiers advertise, which pip does not enforce."""
+        found = [v for where, v, _ in self.sources if where.endswith("classifiers")]
+        return min(found) if found else None
+
     def text(self, version=None):
         version = version or self.floor
         return f"{version[0]}.{version[1]}" if version else "none"
@@ -60,5 +66,9 @@ def read(repo):
         if classifiers:
             lowest = min(classifiers)
             sources.append((f"{name} classifiers", lowest, f"Python :: {lowest[0]}.{lowest[1]}"))
-    floor = min((version for _, version, _ in sources), default=None)
+    # pip enforces `requires-python` and nothing else; the trove classifiers are advertising.
+    # So the floor that decides what installs is the metadata one when it exists.
+    enforced = [version for where, version, _ in sources if not where.endswith("classifiers")]
+    advertised = [version for where, version, _ in sources if where.endswith("classifiers")]
+    floor = min(enforced) if enforced else (min(advertised) if advertised else None)
     return Declared(floor=floor, sources=sources)

@@ -15,7 +15,8 @@ def render(broken, guarded, unjudged, declared, scanned, roots, quiet=False):
         lines.append(f"CONTRADICTION  this project states two different floors: {stated}")
         for where, version, raw in declared.sources:
             lines.append(f"  {where}: {raw}  →  {version[0]}.{version[1]}")
-        lines.append(f"  pip honours the lowest, {floor}, so that is what is checked below.")
+        lines.append(f"  pip enforces requires-python and nothing else, so {floor} is what is "
+                     f"checked below; the classifiers only advertise.")
         lines.append("")
 
     if broken:
