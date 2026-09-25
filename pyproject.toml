@@ -1,0 +1,18 @@
+[project]
+name = "runs-on"
+version = "0.1.0"
+description = "Does this actually run on the Python it promises?"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+classifiers = [
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+
+[project.scripts]
+runs-on = "runson.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

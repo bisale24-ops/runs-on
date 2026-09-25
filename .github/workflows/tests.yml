@@ -1,0 +1,19 @@
+name: tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9", "3.12"]     # the floor it promises, and a current one
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install pytest
+      - name: unit tests
+        run: PYTHONPATH=src python -m pytest tests -q
+      - name: check this repository's own promise
+        run: PYTHONPATH=src python -m runson.cli --repo . --quiet
