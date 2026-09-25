@@ -1,0 +1,7 @@
+BREAKS ITS PROMISE  1
+  src/poetry/utils/_compat.py:11  import tomllib
+      needs 3.11, this package promises 3.10
+
+promises 3.10 · 193 files · 1 broken · 0 guarded · 0 not judged
+
+exit=1

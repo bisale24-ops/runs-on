@@ -1,0 +1,11 @@
+black            promises 3.10 · 41 files · 0 broken · 1 guarded · 0 not judged
+GUARDED  1
+  src/black/files.py:17  import tomllib (needs 3.11)
+      try/except ImportError fallback
+
+
+poetry           promises 3.10 · 193 files · 0 broken · 1 guarded · 0 not judged
+GUARDED  1
+  src/poetry/utils/_compat.py:15  import tomllib (needs 3.11)
+      sys.version_info check
+

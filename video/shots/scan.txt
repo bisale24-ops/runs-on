@@ -1,0 +1,18 @@
+project          promises  files  broken  guarded
+poetry               3.10    193       0        1
+sqlmodel             3.10    166       0        0
+pendulum             3.10    120       0        0
+rich                  3.9    100       0        0
+werkzeug             3.10     54       0        0
+apscheduler          3.10     45       0        0
+black                3.10     41       0        1
+mkdocs                3.8     35       0        0
+urllib3              3.10     35       0        0
+typer                3.10     32       0        0
+tqdm                  3.8     31       0        0
+jinja                3.10     25       0        0
+httpx                 3.9     23       0        0
+loguru                3.5     19       0        2
+arrow                 3.8     10       0        1
+                                                 
+30 projects                 1060       0        5

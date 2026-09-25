@@ -1,0 +1,14 @@
+BREAKS ITS PROMISE  6
+  src/requests/_internal_utils.py:26  X | Y in a runtime annotation
+      needs 3.10, this package promises 3.8
+  src/requests/help.py:67  dict[…] in a runtime annotation
+      needs 3.9, this package promises 3.8
+  src/requests/help.py:83  X | Y in a runtime annotation
+      needs 3.10, this package promises 3.8
+  src/requests/help.py:83  dict[…] in a runtime annotation
+      needs 3.9, this package promises 3.8
+
+$ runs-on --repo rich --floor 3.8
+promises 3.8 · 100 files · 0 broken · 0 guarded · 0 not judged
+$ runs-on --repo rich --floor 3.7
+promises 3.7 · 100 files · 7 broken · 0 guarded · 0 not judged
