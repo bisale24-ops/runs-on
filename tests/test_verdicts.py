@@ -183,3 +183,33 @@ def test_include_tests_reads_them(tmp_path):
     write(tmp_path, "demo/tests/test_thing.py", "import tomllib\n")
     paths, _ = shipped.files(tmp_path, include_tests=True)
     assert any("test_thing" in str(path) for path in paths)
+
+
+def test_an_annotation_inside_a_function_body_is_not_evaluated(tmp_path):
+    """`self.x: list[str] = []` never runs, so it carries no floor. Verified against CPython."""
+    make_package(tmp_path, floor=">=3.7", module="""
+        class Holder:
+            def __init__(self):
+                self.result: list[str] = []
+
+        def build():
+            names: list[str] = []
+            return names
+    """)
+    broken, guarded = run(tmp_path)
+    assert broken == [] and guarded == []
+
+
+def test_an_annotation_in_a_class_body_is_evaluated(tmp_path):
+    make_package(tmp_path, floor=">=3.7", module="""
+        class Holder:
+            result: list[str] = []
+    """)
+    broken, _ = run(tmp_path)
+    assert [f.needs for f in broken] == [(3, 9)]
+
+
+def test_an_annotation_at_module_level_is_evaluated(tmp_path):
+    make_package(tmp_path, floor=">=3.7", module="RESULT: list[str] = []\n")
+    broken, _ = run(tmp_path)
+    assert [f.needs for f in broken] == [(3, 9)]

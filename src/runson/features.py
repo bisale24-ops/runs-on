@@ -36,9 +36,26 @@ class Feature:
         return f"{self.needs[0]}.{self.needs[1]}"
 
 
+def _inside_a_function(node):
+    """Annotations in a function body are never evaluated, so they carry no version floor.
+
+    Established by running it: at module level, in a class body and in a function signature the
+    annotation is evaluated and an undefined name raises. Inside a function body - simple target
+    or attribute target alike - it is not. `self.result: list[str] = []` therefore costs nothing
+    on an old Python, and reporting it would be a false accusation.
+    """
+    parent = getattr(node, "parent", None)
+    while parent is not None:
+        if isinstance(parent, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+            return True
+        parent = getattr(parent, "parent", None)
+    return False
+
+
 def _annotations_of(node):
     if isinstance(node, ast.AnnAssign) and node.annotation:
-        yield node.annotation
+        if not _inside_a_function(node):
+            yield node.annotation
     elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
         if node.returns:
             yield node.returns
