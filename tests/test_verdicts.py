@@ -1,9 +1,19 @@
 """The acceptance criteria, each on a package the test wrote itself."""
 import ast
+import sys
 
-from runson import cli, declared, features, shipped
+import pytest
+
+from runson import declared, features, shipped
 
 from helpers import make_package, write
+
+# A construct can only be recognised by an interpreter that can parse it. On 3.9 `ast.parse`
+# refuses a match statement outright, so these two cases cannot run there - and the tool itself
+# reports such a file as not judged rather than as clean. That behaviour has its own test in
+# test_cli.py; here the fixtures simply cannot be built.
+needs_match = pytest.mark.skipif(sys.version_info < (3, 10),
+                                 reason="ast.parse cannot read a match statement before 3.10")
 
 
 def run(root, floor=None):
@@ -25,6 +35,7 @@ def names(found):
     return [f.name for f in found]
 
 
+@needs_match
 def test_a_bare_match_statement_below_the_floor_is_broken(tmp_path):
     make_package(tmp_path, floor=">=3.9", module="""
         def pick(value):
@@ -41,6 +52,7 @@ def test_a_bare_match_statement_below_the_floor_is_broken(tmp_path):
     assert guarded == []
 
 
+@needs_match
 def test_the_same_match_behind_a_version_check_is_guarded(tmp_path):
     make_package(tmp_path, floor=">=3.9", module="""
         import sys

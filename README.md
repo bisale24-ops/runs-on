@@ -140,6 +140,10 @@ rule that `a | b` outside an annotation is never reported.
   crashed on `ast.Match`, which does not exist before 3.10. Its own check had been silent, because
   a missing attribute is not a syntax error. The fix is in `features.py`; the lesson is in this
   paragraph.
+- **It can only see what its own interpreter can parse.** Run it on 3.9 and it cannot read a
+  `match` statement at all — `ast.parse` refuses. Such a file is reported as *not judged*, with
+  that reason, rather than as clean: a checker that returns silence for a file it never read would
+  be worse than no checker. Run it on a recent Python to check an old floor.
 - **It says nothing about your dependencies.** Whether *they* support your floor is a larger
   question.
 - **The floor is read as text**, from `pyproject.toml`, `setup.cfg`, `setup.py` and the trove
